@@ -23,7 +23,7 @@ function renderToken(editing = false) {
   el.tokenEditor.classList.toggle('hidden', has && !editing);
   el.tokenClear.classList.toggle('hidden', !has);
   el.tokenCancel.classList.toggle('hidden', !has);
-  personalToken.placeholder = has ? 'Nuevo token (deja vacío para conservar el actual)' : 'Token API';
+  personalToken.placeholder = has ? 'Nuevo token' : 'Token API';
   if (editing) personalToken.focus();
 }
 function saveTokenFromInput() {
@@ -61,7 +61,7 @@ function clean() {
   error.textContent = ''; status.textContent = '';
 }
 function blobUrl(data, type) { const url = URL.createObjectURL(data instanceof Blob ? data : new Blob([data], {type})); objectUrls.push(url); return url; }
-function updateLoadButton() { el.loadAR.classList.toggle('hidden', !currentUid || processing); el.loadAR.textContent = apiToken ? 'Ver con texturas en AR' : 'Agregar token para ver en AR'; }
+function updateLoadButton() { el.loadAR.classList.toggle('hidden', !currentUid || processing); el.loadAR.textContent = apiToken ? 'Ver en AR' : 'Agregar token'; }
 
 /* ---------- Visor ---------- */
 function showModel(url, options = {}) {
@@ -74,7 +74,7 @@ function showModel(url, options = {}) {
     'ar-scale':'auto', 'ar-placement':'floor', 'shadow-intensity':'1', 'environment-image':'neutral', 'tone-mapping':'neutral'};
   for (const [name, value] of Object.entries(attrs)) mv.setAttribute(name, value);
   if (options.iosUrl) mv.setAttribute('ios-src', options.iosUrl);
-  mv.innerHTML = '<button slot="ar-button" class="arButton" type="button">◈ &nbsp; Ver en AR</button>';
+  mv.innerHTML = '<button slot="ar-button" class="arButton" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><ellipse cx="12" cy="15" rx="9" ry="4"/><path d="M12 3v9"/></svg>Ver en AR</button>';
   mv.addEventListener('error', () => { error.textContent = 'No se pudo mostrar este modelo.'; });
   mv.addEventListener('ar-status', e => { if (e.detail.status === 'failed') error.textContent = 'No se pudo iniciar AR en este dispositivo. En Android usa Chrome con Servicios de Google Play para RA.'; });
   viewer.append(mv);
@@ -89,16 +89,16 @@ function showEmbed(uid) {
   frame.title = 'Modelo 3D de Sketchfab'; frame.allow = 'autoplay; fullscreen; xr-spatial-tracking'; frame.allowFullscreen = true;
   viewer.append(frame);
   source.href = link.value; actions.classList.remove('hidden');
-  stageTitle.textContent = 'Vista 3D (Sketchfab)';
+  stageTitle.textContent = 'Vista previa';
   history.replaceState(null, '', `#${uid}`);
   updateLoadButton();
 }
 function metaCredit(meta, uid) {
   attribution.replaceChildren();
   const author = meta.user?.displayName || meta.user?.username || 'Autor en Sketchfab';
-  attribution.append(document.createTextNode(`${meta.name || 'Modelo'} · ${author} · ${meta.license?.label || 'Consultar licencia en Sketchfab'} · `));
+  attribution.append(document.createTextNode(`${meta.name || 'Modelo'}, de ${author}. Licencia: ${meta.license?.label || 'consúltala en Sketchfab'}. `));
   const a = document.createElement('a');
-  a.href = `https://sketchfab.com/models/${uid}`; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = 'Sketchfab';
+  a.href = `https://sketchfab.com/models/${uid}`; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = 'Página del modelo';
   attribution.append(a); attribution.classList.remove('hidden');
 }
 
